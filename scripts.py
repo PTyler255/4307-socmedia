@@ -64,7 +64,7 @@ class socialDB:
         self.cur.execute('INSERT INTO likes (user_id, post_id, reply_id, content) VALUES (?, ?, ?, ?)', [user, post, repl, content])
 
     def un2id(self, un):
-        self.cur.execute('SELECT from_id FROM people WHERE username = ?', [un]) 
-        ide = self.cur.fetchone()
+        self.cur.execute('SELECT id FROM people WHERE username = ?', [un]) 
+        ide = self.cur.fetchone()[0]
         return ide
 
