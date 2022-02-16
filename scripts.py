@@ -1,70 +1,68 @@
-import sqlite3
+from manage_db import SocialDB
 
-def dict_factory(cursor, row):
-    d = {}
-    for idx, col in enumerate(cursor, row):
-        d[col[0]] = row[idx]
-    return d
+def populateUsers(db):
+    db.addperson("Hank Hill", "hank1")
+    db.addperson("Sam Doe", "samwich")
+    db.addperson("Sho Gun", "Shogun")
+    db.addperson("Jane Doe", "The Soldier")
+    db.addperson("Todd Howard", "Bethesda")
+    db.addperson("Anna", "aplpaca")
 
-class socialDB:
+def populateFollow(db):
+    db.following("hank1", "aplpaca")
+    db.following("samwich", "aplpaca")
+    db.following("Shogun", "aplpaca")
+    db.following("The Soldier", "aplpaca")
+    db.following("Bethesda", "aplpaca")
+    db.following("Shogun", "Bethesda")
+    db.following("The Soldier", "Bethesda")
+    db.following("The Soldier", "Shogun")
+    db.following("hank1", "samwich")
 
-    def __init__(self):
-        self.con = sqlite3.connect('blueit.db')
-        self.con.row_factory = dict_factory 
-        self.cur = self.con.cursor()
+def makePost(db):
+    db.addPost("aplpaca", "birds are cool")
+    db.addPost("aplpaca", "cats are cool")
+    db.addPost("aplpaca", "dogs are cool")
+    db.addPost("aplpaca", "dinosaurs are cool")
+    db.addPost("aplpaca", "bats are cool")
+    db.addPost("aplpaca", "bugs are cool")
+    db.addPost("Bethesda", "it just works")
+    db.addPost("The Soldier", '"If fighting were to result in victory then you must fight" ~Sun Tzu')
+    db.addPost("Shogun", "First name Sho last name Gun")
+    db.addPost("Shogun", "Why didn't anyone warn me that becoming a robotics engineer would require math")
+    db.addPost("The Soldier", "Godspeed, you magnificent bastard.")
+    db.addPost("hank1", "Propane and propane accessories")
+    db.addPost("samwich", "My name is samwich")
+    db.addPost("Bethesda", "Buy Skyrim again")
 
-    def __del__(self):
-        self.con.commit()
-        self.con.close()
+def makeComment(db):
+    db.comment("Shogun", 2, "yeah")
+    db.comment("hank1", 2, "I prefer dogs")
+    db.comment("hank1", 1, "yeah")
+    db.comment("Shogun", 7, "It does not")
+    db.comment("aplpaca", 10, "Loser")
+    db.comment("aplpaca", 13, "that's a good name")
 
-    def addperson(self, name, username): 
-        self.cur.execute('INSERT INTO people (name, username) VALUES (?, ?)', [name, username])
+def likePost(db):
+    db.like("Shogun", 2)
+    db.like("Shogun", 1)
+    db.like("Shogun", 3)
+    db.like("Shogun", 4)
+    db.like("Shogun", 5)
+    db.like("Shogun", 6)
+    db.like("The Soldier", 7)
+    db.like("The Soldier", 12)
+    db.like("aplpaca", 9)
+    db.like("aplpaca", 10)
 
-    def comment(self, user, post, content):
-        self.cur.execute('INSERT INTO likes (user_id, post_id, content) VALUES (?, ?, ?)', [user, post, content])
+def main():
+    db = SocialDB()
+    populateUsers(db)
+    populateFollow(db)
+    makePost(db)
+    makeComment(db)
+    likePost(db)
+    print(db.getFeed("Shogun", 20))
 
-    def following(self, from_un, following_un):
-        from_id = self.un2id(from_un)
-        from_id = self.un2id(following_un)
-        self.cur.execute('INSERT INTO following (from_id, following_id) VALUES (?, ?)', [from_id, following_id])
-
-    def getFeed(self, user, count):
-        self.cur.execute('SELECT * FROM following JOIN post ON following_id = post.user_id WHERE from_id = ? ORDER BY post.date_created DESC LIMIT ?', [user, count])
-        feed = self.cur.fetchall()
-        return feed
-
-    def getComments(self, post):
-        self.cur.execute('SELECT * FROM following JOIN post ON following_id = post.user_id WHERE from_id = ? ORDER BY post.date_created DESC', [post, post])
-        '''
-        WITH RECURSIVE replies( parent, main, level ) AS (
-             SELECT reply_id, id, 0
-             FROM comments
-             WHERE reply_id IS NULL AND post_id = ?
-            UNION
-             SELECT replies.main, comments.id, replies.level+1
-             FROM comments JOIN replies
-             ON replies.main = comments.reply_id
-             WHERE comments.post_id = ?
-             ORDER BY 2 DESC, date_created DESC
-        )
-        SELECT user_id, content, date_created, level
-        FROM replies JOIN comments
-        ON main = comment.id;
-        '''
-        comments = self.cur.fetchall()
-        return comments
-
-    def like(self, user, post):
-        self.cur.execute('INSERT INTO likes (user_id, post_id) VALUES (?, ?)', [user, post])
-
-    def post(self, user, content):
-        self.cur.execute('INSERT INTO post (user_id, content) VALUES (?, ?)', [user, content])
-
-    def reply(self, user, post, repl, content):
-        self.cur.execute('INSERT INTO likes (user_id, post_id, reply_id, content) VALUES (?, ?, ?, ?)', [user, post, repl, content])
-
-    def un2id(self, un):
-        self.cur.execute('SELECT id FROM people WHERE username = ?', [un]) 
-        ide = self.cur.fetchone()[0]
-        return ide
-
+if __name__ == "__main__":
+    main()
