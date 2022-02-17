@@ -1,4 +1,5 @@
 from manage_db import SocialDB
+import time
 
 def populateUsers(db):
     db.addperson("Hank Hill", "hank1")
@@ -21,18 +22,31 @@ def populateFollow(db):
 
 def makePost(db):
     db.addPost("aplpaca", "birds are cool") #1
+    time.sleep(1)
     db.addPost("aplpaca", "cats are cool") #2
+    time.sleep(1)
     db.addPost("aplpaca", "dogs are cool") #3
+    time.sleep(1)
     db.addPost("aplpaca", "dinosaurs are cool") #4
+    time.sleep(1)
     db.addPost("aplpaca", "bats are cool") #5
+    time.sleep(1)
     db.addPost("aplpaca", "bugs are cool") #6
+    time.sleep(1)
     db.addPost("Bethesda", "it just works") #7
+    time.sleep(1)
     db.addPost("The Soldier", '"If fighting were to result in victory then you must fight" ~Sun Tzu') #8
+    time.sleep(1)
     db.addPost("Shogun", "First name Sho last name Gun") #9
+    time.sleep(1)
     db.addPost("Shogun", "Why didn't anyone warn me that becoming a robotics engineer would require math") #10
+    time.sleep(1)
     db.addPost("The Soldier", "Godspeed, you magnificent bastard.") #11
+    time.sleep(1)
     db.addPost("hank1", "Propane and propane accessories") #12
+    time.sleep(1)
     db.addPost("samwich", "My name is samwich") #13
+    time.sleep(1)
     db.addPost("Bethesda", "Buy Skyrim again") #14
 
 def makeComment(db):
@@ -70,6 +84,7 @@ def main():
     makeComment(db)
     likePost(db)
     makeReply(db)
+    print(db.getFeed("Shogun", 20))
 
 if __name__ == "__main__":
     main()

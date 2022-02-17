@@ -35,7 +35,7 @@ class SocialDB:
 
     def getFeed(self, un, count):
         user = self.un2id(un)
-        self.cur.execute('SELECT posts.id, people.username, posts.content, posts.date_created FROM following JOIN posts ON following_id = posts.user_id JOIN people ON posts.user_id = people.id WHERE from_id = ? ORDER BY posts.date_created LIMIT ?', [user, count])
+        self.cur.execute('SELECT posts.id, people.username, posts.content, posts.date_created FROM following JOIN posts ON following_id = posts.user_id JOIN people ON posts.user_id = people.id WHERE from_id = ? ORDER BY posts.date_created DESC LIMIT ?', [user, count])
         feed = self.cur.fetchall()
         return feed
 
