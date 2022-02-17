@@ -62,12 +62,6 @@ def makeReply(db):
     db.reply("samwich", 13, 6, "Thanks :)") #10
     db.reply("Shogun", 10, 5, ":(") #11
 
-def getComment(db):
-    comments = db.getComments(2)
-    for comment in comments:
-       print("."*comment["level"], comment["username"]) 
-       print("."*comment["level"], comment["content"])
-
 def main():
     db = SocialDB()
     populateUsers(db)
@@ -76,8 +70,6 @@ def main():
     makeComment(db)
     likePost(db)
     makeReply(db)
-    print(db.getFeed("Shogun", 20))
-    getComment(db)
 
 if __name__ == "__main__":
     main()
