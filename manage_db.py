@@ -40,23 +40,23 @@ class SocialDB:
         return feed
 
     def getComments(self, post):
-        self.cur.execute('SELECT * FROM following JOIN posts ON following_id = posts.user_id WHERE from_id = ? ORDER BY posts.date_created DESC', [post, post])
-        '''
-        WITH RECURSIVE replies( parent, main, level ) AS (
-             SELECT reply_id, id, 0
-             FROM comments
+        #self.cur.execute('SELECT * FROM following JOIN posts ON following_id = posts.user_id WHERE from_id = ? ORDER BY posts.date_created DESC', [post, post])
+        self.cur.execute('''WITH RECURSIVE replies( main, level, username, content, date_created ) AS (
+             SELECT comments.id, 0, username, content, comments.date_created 
+             FROM comments JOIN people
+             ON user_id = people.id
              WHERE reply_id IS NULL AND post_id = ?
-            UNION
-             SELECT replies.main, comments.id, replies.level+1
+            UNION ALL
+             SELECT comments.id, replies.level+1, people.username, comments.content, comments.date_created
              FROM comments JOIN replies
-             ON replies.main = comments.reply_id
+             ON main = comments.reply_id
+             JOIN people 
+             ON comments.user_id = people.id
              WHERE comments.post_id = ?
-             ORDER BY 2 DESC, date_created DESC
+             ORDER BY 2 DESC
         )
-        SELECT user_id, content, date_created, level
-        FROM replies JOIN comments
-        ON main = comment.id;
-        '''
+        SELECT * 
+        FROM replies;''', [post,post])
         comments = self.cur.fetchall()
         return comments
 
@@ -64,8 +64,9 @@ class SocialDB:
         user = self.un2id(un)
         self.cur.execute('INSERT INTO likes (user_id, post_id) VALUES (?, ?)', [user, post])
 
-    def reply(self, user, post, repl, content):
-        self.cur.execute('INSERT INTO likes (user_id, post_id, reply_id, content) VALUES (?, ?, ?, ?)', [user, post, repl, content])
+    def reply(self, un, post, repl, content):
+        user = self.un2id(un)
+        self.cur.execute('INSERT INTO comments (user_id, post_id, reply_id, content) VALUES (?, ?, ?, ?)', [user, post, repl, content])
 
     def un2id(self, un):
         self.cur.execute('SELECT id FROM people WHERE username = ?', [un]) 
