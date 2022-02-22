@@ -2,12 +2,12 @@ from manage_db import SocialDB
 import time
 
 def populateUsers(db):
-    db.addperson("Hank Hill", "hank1")
-    db.addperson("Sam Doe", "samwich")
-    db.addperson("Sho Gun", "Shogun")
-    db.addperson("Jane Doe", "The Soldier")
-    db.addperson("Todd Howard", "Bethesda")
-    db.addperson("Anna", "aplpaca")
+    db.addPerson("Hank Hill", "hank1")
+    db.addPerson("Sam Doe", "samwich")
+    db.addPerson("Sho Gun", "Shogun")
+    db.addPerson("Jane Doe", "The Soldier")
+    db.addPerson("Todd Howard", "Bethesda")
+    db.addPerson("Anna", "aplpaca")
 
 def populateFollow(db):
     db.following("hank1", "aplpaca")
