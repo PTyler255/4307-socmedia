@@ -6,7 +6,7 @@ The database management is condensed within a class. If you want to directly int
 
 The file scripts.py provides an automated demonstration that prepopulates the tables and shows the content of the three main SELECT commands.
 
-##SCHEMA	
+## SCHEMA	
 
 ```sql
 CREATE TABLE people (
@@ -14,26 +14,24 @@ CREATE TABLE people (
 	name TEXT NOT NULL,
 	username TEXT NOT NULL UNIQUE,
 	date_created DATE NOT NULL DEFAULT CURRENT_TIMESTAMP
-);```
+);
 
-```sql
 CREATE TABLE following (
 	from_id INTEGER NOT NULL,
 	following_id INT NOT NULL REFERENCES people (id),
 	date_created DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (from_id, following_id),
 	FOREIGN KEY (from_id) REFERENCES people (id)
-);```
+);
 
-```sql
 CREATE TABLE posts (
 	id INTEGER PRIMARY KEY,
 	user_id INT NOT NULL,
 	content TEXT NOT NULL,
 	date_created DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	FOREIGN KEY (user_id) REFERENCES people (id)
-);```
-```sql
+);
+
 CREATE TABLE comments (
 	id INTEGER PRIMARY KEY,
 	user_id INT NOT NULL,
@@ -43,8 +41,8 @@ CREATE TABLE comments (
 	date_created DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	FOREIGN KEY (user_id) REFERENCES people (id),
 	FOREIGN KEY (post_id) REFERENCES posts (id)
-);```
-```sql
+);
+
 CREATE TABLE likes (
 	id INTEGER PRIMARY KEY,
 	user_id INT NOT NULL,
@@ -52,7 +50,7 @@ CREATE TABLE likes (
 	date_created DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	FOREIGN KEY (user_id) REFERENCES people (id),
 	FOREIGN KEY (post_id) REFERENCES posts (id)
-);```
+);
 ```
 
 ## COMMANDS
