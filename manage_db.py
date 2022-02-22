@@ -17,12 +17,38 @@ class SocialDB:
         self.con.commit()
         self.con.close()
 
-    def addperson(self, name, username): 
+    def addPerson(self, name, username): 
         self.cur.execute('INSERT INTO people (name, username) VALUES (?, ?)', [name, username])
 
     def addPost(self, user, content):
         un = self.un2id(user)
         self.cur.execute('INSERT INTO posts (user_id, content) VALUES (?, ?)', [un, content])
+
+    def circles(self, user, count):
+        un = self.un2id(user)
+        self.cur.execute('''WITH RECURSIVE circles(fromi, following, n) AS (
+                 SELECT from_id, following_id, 0
+                 FROM following
+                 WHERE from_id = ?
+                UNION
+                 SELECT A.following, B.following_id, n+1 
+                 FROM circles A JOIN following B
+                 ON A.following = B.from_id
+                 WHERE A.n < ?
+            )
+                 SELECT people.id, people.username, MIN(n)+1 AS degree
+                 FROM circles JOIN people
+                 ON circles.following = people.id
+                 GROUP BY circles.following
+                UNION
+                 SELECT people.id, people.username, 0 AS degree
+                 FROM people
+                 WHERE people.id = ?
+                ORDER BY degree;
+        ''', [un, count, un])
+        circles = self.cur.fetchall()
+        return circles
+
 
     def comment(self, un, post, content):
         user = self.un2id(un)

@@ -19,6 +19,7 @@ def populateFollow(db):
     db.following("The Soldier", "Bethesda")
     db.following("The Soldier", "Shogun")
     db.following("hank1", "samwich")
+    db.following("Shogun", "samwich")
 
 def makePost(db):
     db.addPost("aplpaca", "birds are cool") #1
@@ -77,6 +78,7 @@ def makeReply(db):
     db.reply("Shogun", 10, 5, ":(") #11
 
 def main():
+    print("If the program seems slow, don't worry, I set up built in delays or else the demonstration of the feed would fail as all posts would share the same date and time")
     db = SocialDB()
     populateUsers(db)
     populateFollow(db)
@@ -84,7 +86,9 @@ def main():
     makeComment(db)
     likePost(db)
     makeReply(db)
-    print(db.getFeed("Shogun", 20))
+    print("FEED: ", db.getFeed("Shogun", 20))
+    print("COMMENTS: ", db.getComments(2))
+    print("CIRCLES: ", db.circles("The Soldier", 4))
 
 if __name__ == "__main__":
     main()
